@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FluidLab — smoke and fire simulation for After Effects</title>
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<meta name="description" content="FluidLab is a free After Effects effect that simulates smoke and fire. Your layers are the fuel and the obstacles: text, shapes, and footage emit smoke, burn, burst, and push it around.">
+<style>
+    :root {
+        --bg: #1E2024;
+        --surface: #2A2D33;
+        --border: #4A4D54;
+        --text: #DDD;
+        --text-strong: #FFF;
+        --muted: #8A8F98;
+        --accent: #4DA6FF;
+        --gold: #FFC53D;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+    }
+    .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+        margin-bottom: 44px;
+    }
+    .mark { width: 96px; height: 96px; }
+    h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        color: var(--text-strong);
+    }
+    .tagline { margin: 0; color: var(--muted); font-size: 15px; max-width: 460px; }
+
+    .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .btn {
+        display: inline-block;
+        background: var(--surface);
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        color: var(--text-strong);
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 22px;
+        text-decoration: none;
+        transition: border-color 120ms, background-color 120ms;
+        white-space: nowrap;
+    }
+    .btn:hover { border-color: #FFF; }
+    .btn:active { background: rgba(77, 166, 255, 0.15); }
+    .btn small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); }
+
+    section { margin-top: 40px; }
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+    .divider span {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+    }
+    h3 {
+        margin: 18px 0 6px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-strong);
+    }
+    ol { margin: 0; padding-left: 22px; }
+    li { margin-bottom: 10px; }
+    li::marker { color: var(--accent); font-weight: 700; }
+    a { color: var(--accent); }
+    .fine { color: var(--muted); font-size: 12px; }
+    code {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-size: 12px;
+    }
+    .features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        font-size: 13px;
+    }
+    .features > div {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 12px 14px;
+    }
+    .features strong { display: block; color: var(--text-strong); margin-bottom: 4px; }
+    .features p { margin: 0; color: var(--text); }
+
+    /* Renders break out of the text column, like the other pages. */
+    .shots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        width: min(1080px, calc(100vw - 48px));
+        margin-left: 50%;
+        transform: translateX(-50%);
+    }
+    .shots figure { margin: 0; }
+    .shots img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        cursor: zoom-in;
+        transition: border-color 120ms;
+    }
+    .shots img:hover { border-color: var(--accent); }
+    .shots figcaption {
+        margin-top: 6px;
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+    }
+    .lightbox {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 11, 13, 0.9);
+        z-index: 100;
+        cursor: zoom-out;
+        padding: 24px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+        max-width: 96vw;
+        max-height: 92vh;
+        width: auto;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+    }
+    footer {
+        margin-top: 56px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+    }
+    @media (max-width: 620px) {
+        .features, .shots { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="hero">
+        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+            <defs>
+                <linearGradient id="smoke" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0" stop-color="#6E737C"/>
+                    <stop offset="1" stop-color="#4DA6FF"/>
+                </linearGradient>
+                <radialGradient id="flame" cx="0.5" cy="0.72" r="0.62">
+                    <stop offset="0" stop-color="#FFF6DA"/>
+                    <stop offset="0.42" stop-color="#FFC53D"/>
+                    <stop offset="1" stop-color="#FF6A2A"/>
+                </radialGradient>
+            </defs>
+            <g fill="none" stroke="url(#smoke)" stroke-linecap="round">
+                <path d="M31 38 C 23 33, 24 25, 31 23 C 38 21, 40 14, 34 9" stroke-width="5.5"/>
+                <path d="M34 37 C 42 33, 47 29, 48 22 C 49 17, 45 14, 41 16" stroke-width="4.5" opacity="0.85"/>
+                <path d="M28 38 C 19 35, 13 30, 16 23 C 17.5 19.5, 21.5 19, 23 22" stroke-width="4" opacity="0.7"/>
+            </g>
+            <path d="M32 59 C 23 59, 19.5 51.5, 23 45.5 C 25.5 41.5, 26.5 37.5, 26 33.5 C 30.5 36.5, 33.5 40, 34.5 44 C 36.5 41.5, 37.5 39.5, 37.5 37 C 42.5 41.5, 44 47.5, 42 52.5 C 40.2 56.6, 36.4 59, 32 59 Z" fill="url(#flame)"/>
+        </svg>
+        <h1>FLUIDLAB</h1>
+        <p class="tagline">Smoke and fire, simulated inside After Effects.
+        Your layers are the fuel and the obstacles: text, shapes, and
+        footage give off smoke, catch fire, slam down in bursts of dust,
+        and push the air around.</p>
+        <div class="buttons">
+            <a class="btn" id="dl-mac" href="https://github.com/tlatvys-ac/fluidlab-app/releases/latest/download/FluidLab-0.1.28-mac.pkg">
+                Download for macOS
+                <small>Installer (.pkg) · Apple Silicon &amp; Intel · free</small>
+            </a>
+            <a class="btn" id="dl-win" href="https://github.com/tlatvys-ac/fluidlab-app/releases/latest/download/FluidLab-0.1.28-win-setup.exe">
+                Download for Windows
+                <small>x64 installer (.exe) · free · beta</small>
+            </a>
+        </div>
+    </div>
+
+    <section>
+        <div class="divider"><span>About</span></div>
+        <p>FluidLab is an After Effects effect that runs a real 2D fluid
+        simulation on a layer. Pick up to three fuel layers and they
+        give off smoke in their own colors (or burn, if you'd rather have
+        fire). Pick collision layers and the smoke flows around them, and
+        when they move they shove it out of the way. Everything is
+        keyframable, and every frame renders the same way every time, in
+        the Render Queue, with Multi-Frame Rendering, or in aerender.</p>
+    </section>
+
+    <section>
+        <div class="divider"><span>What it looks like</span></div>
+        <div class="shots">
+            <figure>
+                <img src="images/collide.png" alt="White smoke rising from below and curling around the word COLLIDE" loading="lazy">
+                <figcaption>Smoke rising into a text layer used as a collider</figcaption>
+            </figure>
+            <figure>
+                <img src="images/burst.png" alt="A wide cloud of grey dust blasting out sideways from the word BAM on a white background" loading="lazy">
+                <figcaption>A burst of dust as a text layer slams down</figcaption>
+            </figure>
+            <figure>
+                <img src="images/grid.png" alt="Swirling smoke drawn as a grid of small glowing green squares on deep blue" loading="lazy">
+                <figcaption>Grid style, Phosphor palette</figcaption>
+            </figure>
+            <figure>
+                <img src="images/ascii.png" alt="Smoke drawn as colored ASCII characters in a monospaced font" loading="lazy">
+                <figcaption>ASCII style, set in the included FluidLab Mono typeface</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section>
+        <div class="divider"><span>Features</span></div>
+        <div class="features">
+            <div>
+                <strong>Layers as fuel</strong>
+                <p>Three fuel slots plus a built-in emitter. Smoke takes the
+                layer's colors or a custom one, and can inherit the layer's
+                motion.</p>
+            </div>
+            <div>
+                <strong>Layers as colliders</strong>
+                <p>Three collision slots. Smoke flows around the layer's
+                exact shape, and moving layers push it.</p>
+            </div>
+            <div>
+                <strong>Fire</strong>
+                <p>Fuel burns into heat, flame, and soot, and spreads by
+                ignition temperature. The flames light the smoke around
+                them and glow.</p>
+            </div>
+            <div>
+                <strong>Bursts</strong>
+                <p>Keyframe a burst and smoke or dust blasts out from a
+                layer in every direction, for slams and impacts.</p>
+            </div>
+            <div>
+                <strong>Lighting</strong>
+                <p>A directional light with self-shadowing, your comp's
+                point, spot, and parallel lights, and other layers casting
+                shadows onto the smoke.</p>
+            </div>
+            <div>
+                <strong>Stylized looks</strong>
+                <p>ASCII, Dot, Grid, Pixel, and Flow, with color palettes
+                and bloom. The ASCII style comes with twelve FluidLab Mono
+                fonts.</p>
+            </div>
+            <div>
+                <strong>Variation</strong>
+                <p>A seed and turbulence give you different takes with the
+                same settings, and they're repeatable.</p>
+            </div>
+            <div>
+                <strong>Detail and speed</strong>
+                <p>Smoke detail finer than the flow grid, sharp advection,
+                and a cache that resumes from the nearest frame. On a Mac
+                the simulation can also run on the GPU (Metal).</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="divider"><span>Setup</span></div>
+        <ol>
+            <li><strong>Install</strong> — run the installer for your
+                system. It needs an administrator password, since After
+                Effects plug-ins live in a shared folder.</li>
+            <li>Start (or restart) After Effects.</li>
+            <li>Make a solid the size of your comp, then apply
+                <em>Effect&nbsp;→&nbsp;FluidLab&nbsp;→&nbsp;FluidLab</em>.
+                Smoke starts from the built-in emitter right away.</li>
+            <li>Choose your layers under <strong>Fuel 1–3</strong>,
+                <strong>Collision</strong>, and <strong>Burst 1–2</strong>.
+                The layers you pick can stay hidden.</li>
+        </ol>
+        <h3>The installers aren't signed yet</h3>
+        <p class="fine"><strong>macOS:</strong> if the installer says it
+        can't be opened, right-click it and choose <em>Open</em>. On macOS
+        15 and later, open <em>System Settings → Privacy &amp; Security</em>
+        instead and click <em>Open Anyway</em>.<br>
+        <strong>Windows:</strong> if SmartScreen says it protected your PC,
+        click <em>More info</em>, then <em>Run anyway</em>.</p>
+        <p class="fine">The plug-in installs to
+        <code>/Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/FluidLab</code>
+        on macOS and
+        <code>C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\FluidLab</code>
+        on Windows. To uninstall on macOS, delete that folder; on Windows,
+        use <em>Settings → Apps</em>.</p>
+    </section>
+
+    <section>
+        <div class="divider"><span>Requirements</span></div>
+        <p class="fine">After Effects on macOS 12 or later (Apple Silicon
+        or Intel) or 64-bit Windows. Developed and tested on After Effects
+        2026; earlier versions haven't been tested. The Windows version is
+        new and hasn't had much testing yet, and its simulation runs on
+        the CPU only (the GPU option falls back to the CPU). Everything
+        runs locally: no accounts and no network calls.</p>
+    </section>
+
+    <footer>
+        FluidLab <span id="version">v0.1.28</span> ·
+        <a href="https://github.com/tlatvys-ac/fluidlab-app/releases">release notes</a> ·
+        made by Thomas Latvys ·
+        see also <a href="https://tlatvys-ac.github.io/anchor-buddy-app/">Anchor Buddy</a>,
+        <a href="https://tlatvys-ac.github.io/transporter-app/">Transporter</a>,
+        <a href="https://tlatvys-ac.github.io/aedoom-app/">AEDoom</a>,
+        and <a href="https://tlatvys-ac.github.io/motionref-app/">MotionRef</a>
+    </footer>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-label="Render preview" aria-hidden="true">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+    // Click a render to preview it at full size; click anywhere
+    // (or press Escape) to close.
+    (() => {
+        const box = document.getElementById("lightbox");
+        const big = document.getElementById("lightbox-img");
+        document.querySelectorAll(".shots img").forEach((img) => {
+            img.addEventListener("click", () => {
+                big.src = img.src;
+                big.alt = img.alt;
+                box.classList.add("open");
+                box.setAttribute("aria-hidden", "false");
+            });
+        });
+        const close = () => {
+            box.classList.remove("open");
+            box.setAttribute("aria-hidden", "true");
+        };
+        box.addEventListener("click", close);
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") close();
+        });
+    })();
+    </script>
+
+    <script>
+    // Keep the version and download links pointing at the latest
+    // release automatically; the hardcoded values above are the
+    // fallback if this fetch fails.
+    fetch("https://api.github.com/repos/tlatvys-ac/fluidlab-app/releases/latest")
+        .then((r) => r.json())
+        .then((rel) => {
+            const v = (rel.tag_name || "").replace(/^v/, "");
+            if (v) document.getElementById("version").textContent = "v" + v;
+            const link = (id, re) => {
+                const asset = (rel.assets || []).find((a) => re.test(a.name));
+                const el = document.getElementById(id);
+                if (asset && el) el.href = asset.browser_download_url;
+            };
+            link("dl-mac", /mac\.pkg$/);
+            link("dl-win", /win-setup\.exe$/);
+        })
+        .catch(() => {});
+    </script>
+</div>
+</body>
+</html>
