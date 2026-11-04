@@ -9,194 +9,466 @@
 <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <meta name="description" content="FluidLab is a free After Effects effect that simulates smoke and fire. Your layers are the fuel and the obstacles: text, shapes, and footage emit smoke, burn, burst, and push it around.">
+<meta name="theme-color" content="#1E2024">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tlatvys-ac.github.io/fluidlab-app/">
+<meta property="og:title" content="FluidLab — smoke and fire simulation for After Effects">
+<meta property="og:description" content="A free After Effects effect that simulates smoke and fire. Your layers are the fuel and the obstacles.">
+<meta property="og:image" content="https://tlatvys-ac.github.io/fluidlab-app/images/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Yellow, white and blue smoke from three sources swirling into each other on deep blue">
+<meta name="twitter:card" content="summary_large_image">
 <style>
     :root {
         --bg: #1E2024;
         --surface: #2A2D33;
-        --border: #4A4D54;
+        --border: #3E424A;
         --text: #DDD;
         --text-strong: #FFF;
-        --muted: #8A8F98;
+        --muted: #9BA1AA;
         --accent: #4DA6FF;
+        --accent-hover: #74BAFF;
+        --on-accent: #0B1A2B;
         --gold: #FFC53D;
+        /* the logo's digits: green ones, off-white zeros */
+        --logo-green: #5FD3B0;
+        --logo-white: #F2F3F1;
     }
     * { box-sizing: border-box; }
+    html { overflow-x: clip; }
     body {
         margin: 0;
         background: var(--bg);
         color: var(--text);
         font-family: -apple-system, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+        font-size: 16px;
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
     }
     .wrap {
         max-width: 660px;
         margin: 0 auto;
-        padding: 56px 24px 80px;
+        padding: 64px 24px 48px;
     }
+    a { color: var(--accent); text-underline-offset: 2px; }
+    a:hover { color: var(--accent-hover); }
+    :focus-visible {
+        outline: 2px solid var(--text-strong);
+        outline-offset: 3px;
+        border-radius: 4px;
+    }
+    h1, h2, h3, .tagline, figcaption { text-wrap: balance; }
+
+    /* ---------------------------------------------------------- hero */
     .hero {
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 14px;
-        margin-bottom: 44px;
     }
-    .mark { width: 120px; height: 120px; }
+    .mark { width: 112px; height: 112px; }
     h1 {
-        margin: 0;
-        font-size: 22px;
+        margin: 18px -0.3em 0 0;   /* cancel the trailing letter-spacing so it centers */
+        font-size: 28px;
         font-weight: 700;
         letter-spacing: 0.3em;
+        line-height: 1.2;
         color: var(--text-strong);
     }
-    .tagline { margin: 0; color: var(--muted); font-size: 15px; max-width: 460px; }
-
+    .tagline {
+        margin: 12px 0 0;
+        color: #B4B9C1;
+        font-size: 18px;
+        max-width: 460px;
+    }
     .buttons {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
         justify-content: center;
-        margin-top: 10px;
+        gap: 12px;
+        margin-top: 28px;
     }
     .btn {
         display: inline-block;
-        background: var(--surface);
-        border: 1px solid var(--accent);
-        border-radius: 6px;
-        color: var(--text-strong);
-        font-size: 14px;
+        min-width: 296px;
+        text-align: center;
+        background: var(--accent);
+        border-radius: 8px;
+        color: var(--on-accent);
+        font-size: 16px;
         font-weight: 700;
-        padding: 10px 22px;
+        line-height: 1.4;
+        padding: 12px 32px;
         text-decoration: none;
-        transition: border-color 120ms, background-color 120ms;
+        box-shadow: 0 6px 24px rgba(77, 166, 255, 0.25);
+        transition: background-color 120ms, box-shadow 120ms, transform 120ms;
         white-space: nowrap;
     }
-    .btn:hover { border-color: #FFF; }
-    .btn:active { background: rgba(77, 166, 255, 0.15); }
-    .btn small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); }
+    .btn:hover {
+        background: var(--accent-hover);
+        color: var(--on-accent);
+        box-shadow: 0 8px 32px rgba(77, 166, 255, 0.4);
+        transform: translateY(-1px);
+    }
+    .btn:active { transform: none; box-shadow: 0 4px 16px rgba(77, 166, 255, 0.25); }
+    /* the other platform's button: outlined, so the visitor's own stands out */
+    .btn.btn-secondary {
+        background: transparent;
+        color: var(--text-strong);
+        box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    .btn.btn-secondary:hover {
+        background: rgba(77, 166, 255, 0.12);
+        color: var(--text-strong);
+        box-shadow: inset 0 0 0 1px var(--accent-hover);
+    }
+    .btn.btn-secondary small { color: var(--muted); }
+    .btn small {
+        display: block;
+        font-weight: 500;
+        font-size: 12px;
+        color: rgba(11, 26, 43, 0.72);
+    }
+    .hero-notes {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+    }
 
-    section { margin-top: 40px; }
-    .divider {
+    /* The strongest render, breaking out of the text column like the gallery. */
+    .hero-figure {
+        flex: none;
+        width: min(756px, calc(100vw - 48px));
+        margin: 44px 0 0;
+    }
+    .hero-media {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #0E0F12;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    }
+    .hero-media img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    .hero-figure figcaption {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--muted);
+    }
+    .hero-figure figcaption strong { font-weight: 600; }
+
+    /* ------------------------------------------------------ sections */
+    section { margin-top: 72px; }
+    h2.divider {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
+        gap: 12px;
+        margin: 0 0 24px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
     }
-    .divider::before, .divider::after {
+    h2.divider::before, h2.divider::after {
         content: "";
         flex: 1;
         height: 1px;
         background: var(--border);
     }
-    .divider span {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--muted);
-    }
     h3 {
-        margin: 18px 0 6px;
-        font-size: 13px;
+        margin: 32px 0 8px;
+        font-size: 17px;
         font-weight: 700;
+        line-height: 1.4;
         color: var(--text-strong);
     }
-    ol { margin: 0; padding-left: 22px; }
-    li { margin-bottom: 10px; }
-    li::marker { color: var(--accent); font-weight: 700; }
-    a { color: var(--accent); }
-    .fine { color: var(--muted); font-size: 12px; }
-    code {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        padding: 1px 6px;
-        font-size: 12px;
-    }
-    .features { margin: 0; padding-left: 22px; }
-    .features li { margin-bottom: 8px; font-size: 18px; font-weight: 600; color: var(--text-strong); }
+    p { margin: 0 0 12px; }
+    .lead { font-size: 17px; }
+    .fine { color: var(--muted); font-size: 14px; }
+    strong { color: var(--text-strong); }
 
-    /* Renders break out of the text column, like the other pages. */
-    .shots {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+    /* ------------------------------------------------------- gallery */
+    /* Renders break out of the text column. */
+    .gallery {
         width: min(1080px, calc(100vw - 48px));
         margin-left: 50%;
         transform: translateX(-50%);
     }
-    .shots.three { grid-template-columns: repeat(3, 1fr); }
-    .shots figure { margin: 0; }
-    .shots img {
-        display: block;
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        cursor: zoom-in;
-        transition: border-color 120ms;
-    }
-    .shots img:hover { border-color: var(--accent); }
-    .shots figcaption {
-        margin-top: 6px;
-        font-size: 11px;
+    .gallery h3 {
+        margin: 40px 0 14px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         color: var(--muted);
         text-align: center;
     }
+    .gallery h3:first-child { margin-top: 0; }
+    .shots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .shots.one { grid-template-columns: min(756px, 100%); justify-content: center; }
+    .shots.three { grid-template-columns: repeat(3, 1fr); }
+    .shots figure { margin: 0; }
+    .shot {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        overflow: hidden;
+        cursor: zoom-in;
+        transition: border-color 120ms;
+    }
+    .shot:hover { border-color: var(--accent); }
+    .shot:focus-visible { border-radius: 10px; }
+    .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    .shots figcaption {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+    }
+    .shots figcaption strong { font-weight: 600; }
+
+    /* ------------------------------------------------------ features */
+    .features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .features li {
+        padding: 16px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    .features li strong {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 16px;
+    }
+
+    /* --------------------------------------------------------- setup */
+    .steps {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: step;
+    }
+    .steps li {
+        position: relative;
+        margin-bottom: 16px;
+        padding-left: 44px;
+        counter-increment: step;
+    }
+    .steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--c);
+        color: var(--on-accent);
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 28px;
+        text-align: center;
+    }
+    .steps li:nth-child(odd) { --c: var(--logo-green); }
+    .steps li:nth-child(even) { --c: var(--logo-white); }
+
+    .callout {
+        margin: 28px 0 0;
+        padding: 16px 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--gold);
+        border-radius: 8px;
+        scroll-margin-top: 24px;
+    }
+    .callout h3 { margin: 0 0 6px; font-size: 16px; }
+    .callout p { margin: 0 0 8px; font-size: 15px; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    details {
+        margin-top: 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+    }
+    summary {
+        padding: 14px 20px;
+        font-weight: 600;
+        color: var(--text-strong);
+        cursor: pointer;
+        list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin: 0 12px 2px 0;
+        border-right: 2px solid var(--muted);
+        border-bottom: 2px solid var(--muted);
+        transform: rotate(-45deg);
+        transition: transform 120ms;
+    }
+    details[open] summary::before { transform: rotate(45deg); }
+    .details-body { padding: 0 20px 18px; }
+    .details-body h3 { margin: 12px 0 6px; font-size: 16px; }
+    .details-body h3 ~ h3 { margin-top: 24px; }
+
+    .path {
+        display: flex;
+        align-items: stretch;
+        margin: 8px 0 12px;
+        background: #17191C;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+    }
+    .path code {
+        flex: 1;
+        min-width: 0;
+        padding: 9px 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+        font: 13px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+        color: var(--text);
+    }
+    .copy {
+        flex: none;
+        padding: 0 14px;
+        border: 0;
+        border-left: 1px solid var(--border);
+        border-radius: 0 6px 6px 0;
+        background: transparent;
+        color: var(--accent);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .copy:hover { background: var(--surface); }
+
+    /* ------------------------------------------------------ lightbox */
     .lightbox {
         position: fixed;
         inset: 0;
-        display: none;
+        display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(10, 11, 13, 0.9);
+        background: rgba(10, 11, 13, 0.92);
         z-index: 100;
         cursor: zoom-out;
         padding: 24px;
     }
-    .lightbox.open { display: flex; }
+    .lightbox[hidden] { display: none; }
     .lightbox img {
         max-width: 96vw;
         max-height: 92vh;
         width: auto;
         height: auto;
-        border-radius: 8px;
+        border-radius: 10px;
         border: 1px solid var(--border);
         box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
     }
+    .lightbox-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--text-strong);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    /* -------------------------------------------------------- footer */
     footer {
-        margin-top: 56px;
+        margin-top: 88px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
         text-align: center;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 13px;
     }
+    footer p { margin: 0 0 6px; }
+    footer a { text-decoration: none; white-space: nowrap; }
+    .nowrap { white-space: nowrap; }
+    footer a:hover { text-decoration: underline; }
+    .sep { margin: 0 6px; opacity: 0.5; }
+
     @media (max-width: 620px) {
-        .shots, .shots.three { grid-template-columns: 1fr; }
+        .wrap { padding-top: 48px; }
+        .shots, .shots.three, .features { grid-template-columns: 1fr; }
+        section { margin-top: 56px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
     }
 </style>
 </head>
 <body>
 <div class="wrap">
-    <div class="hero">
-        <img class="mark" src="images/logo.svg" alt="">
+    <header class="hero">
+        <img class="mark" src="images/logo.svg" alt="" width="112" height="112">
         <h1>FLUIDLAB</h1>
         <p class="tagline">Simulate smoke and fire inside After Effects</p>
-        <div class="buttons">
+        <div class="buttons" id="buttons">
             <a class="btn" id="dl-mac" href="https://github.com/tlatvys-ac/fluidlab-app/releases/latest/download/FluidLab-0.1.39-mac.pkg">
                 Download for macOS
                 <small>Installer (.pkg) · Apple Silicon &amp; Intel · free</small>
             </a>
-            <a class="btn" id="dl-win" href="https://github.com/tlatvys-ac/fluidlab-app/releases/latest/download/FluidLab-0.1.39-win-setup.exe">
+            <a class="btn btn-secondary" id="dl-win" href="https://github.com/tlatvys-ac/fluidlab-app/releases/latest/download/FluidLab-0.1.39-win-setup.exe">
                 Download for Windows
                 <small>x64 installer (.exe) · free · beta</small>
             </a>
         </div>
-    </div>
+        <p class="hero-notes">
+            Not signed yet: your system will ask you to approve the installer.
+            <a href="#unsigned">How to open it</a>
+        </p>
+        <figure class="hero-figure">
+            <div class="hero-media">
+                <picture>
+                    <source type="image/avif" srcset="images/smoke.avif">
+                    <img src="images/smoke.jpg" width="960" height="540" fetchpriority="high" decoding="async" alt="Yellow, white and blue smoke from three sources swirling into each other on deep blue">
+                </picture>
+            </div>
+            <figcaption><strong>Smoke</strong> — simulate smoke from up to 3 fuel source layers</figcaption>
+        </figure>
+    </header>
 
+    <main>
     <section>
-        <div class="divider"><span>About</span></div>
-        <p>FluidLab allows you to simulate 2D smoke and fire inside of After
+        <h2 class="divider">About</h2>
+        <p class="lead">FluidLab allows you to simulate 2D smoke and fire inside of After
         Effects. Just apply the FluidLab effect to a layer, assign fuel,
         collision, and light layers, and watch it flow. Everything is
         keyframable, and it animates fast on the CPU, or optionally on
@@ -204,85 +476,121 @@
     </section>
 
     <section>
-        <div class="divider"><span>What it looks like</span></div>
-        <div class="shots">
-            <figure>
-                <img src="images/smoke.png" alt="Yellow, white and blue smoke from three sources swirling into each other on deep blue" loading="lazy">
-                <figcaption>Simulate smoke from up to 3 fuel source layers</figcaption>
-            </figure>
-            <figure>
-                <img src="images/fire.png" alt="Orange flames and dark smoke rising from the word FIRE in the title Playing with FIRE, on black" loading="lazy">
-                <figcaption>Simulate fire as well</figcaption>
-            </figure>
+        <h2 class="divider">What it looks like</h2>
+        <div class="gallery">
+            <h3>Fire</h3>
+            <div class="shots one">
+                <figure>
+                    <button class="shot" type="button" aria-haspopup="dialog">
+                        <picture>
+                            <source type="image/avif" srcset="images/fire.avif">
+                            <img src="images/fire.jpg" width="960" height="540" loading="lazy" decoding="async" alt="Orange flames and dark smoke rising from the word FIRE in the title Playing with FIRE, on black">
+                        </picture>
+                    </button>
+                    <figcaption><strong>Fire</strong> — simulate fire as well</figcaption>
+                </figure>
+            </div>
+
+            <h3>Built-in styles</h3>
+            <div class="shots three">
+                <figure>
+                    <button class="shot" type="button" aria-haspopup="dialog" data-full="images/grid">
+                        <picture>
+                            <source type="image/avif" srcset="images/grid-crop.avif">
+                            <img src="images/grid-crop.jpg" width="664" height="498" loading="lazy" decoding="async" alt="Close-up of swirling smoke drawn as a grid of small glowing green squares on deep blue">
+                        </picture>
+                    </button>
+                    <figcaption><strong>Grid</strong> — smoke drawn as a grid of small glowing squares</figcaption>
+                </figure>
+                <figure>
+                    <button class="shot" type="button" aria-haspopup="dialog" data-full="images/ascii">
+                        <picture>
+                            <source type="image/avif" srcset="images/ascii-crop.avif">
+                            <img src="images/ascii-crop.jpg" width="560" height="420" loading="lazy" decoding="async" alt="Close-up of green smoke drawn as ASCII characters in a monospaced font on black">
+                        </picture>
+                    </button>
+                    <figcaption><strong>ASCII</strong> — smoke drawn as ASCII characters</figcaption>
+                </figure>
+                <figure>
+                    <button class="shot" type="button" aria-haspopup="dialog" data-full="images/dither">
+                        <picture>
+                            <source type="image/avif" srcset="images/dither-crop.avif">
+                            <img src="images/dither-crop.jpg" width="720" height="540" loading="lazy" decoding="async" alt="Close-up of grey smoke drawn as a 4×4 Bayer dither of small dots on black">
+                        </picture>
+                    </button>
+                    <figcaption><strong>Dither</strong> — smoke drawn as a 4×4 Bayer dither of small dots</figcaption>
+                </figure>
+            </div>
         </div>
     </section>
 
     <section>
-        <div class="divider"><span>Customize your image with different built in Styles</span></div>
-        <div class="shots three">
-            <figure>
-                <img src="images/grid.png" alt="Swirling smoke drawn as a grid of small glowing green squares on deep blue, around the words The Grid. A digital frontier..." loading="lazy">
-                <figcaption>Grid Style</figcaption>
-            </figure>
-            <figure>
-                <img src="images/ascii.png" alt="Green smoke drawn as ASCII characters in a monospaced font on black, beside the words ASK ME ABOUT MY ASCII" loading="lazy">
-                <figcaption>ASCII Style</figcaption>
-            </figure>
-            <figure>
-                <img src="images/dither.png" alt="Grey smoke drawn as a 4×4 Bayer dither of small dots above the words DITHER ME TIMBERS on black" loading="lazy">
-                <figcaption>Dither Style</figcaption>
-            </figure>
-        </div>
-    </section>
-
-    <section>
-        <div class="divider"><span>Features</span></div>
+        <h2 class="divider">Features</h2>
         <ul class="features">
-            <li>FAST 2D Smoke Simulation inside After Effects</li>
-            <li>Simulate fire as well</li>
-            <li>Start from 11 built-in presets: fire, candle, magic fire, smoke, wispy smoke, steam, fog, dust, and ink</li>
-            <li>Turn on collisions to interact with the smoke</li>
-            <li>Turn on the optional lighting system and add depth to your smoke</li>
-            <li>Use the built-in FluidLab 2D lights, or native After Effects lights</li>
-            <li>Customize your smoke with built-in style effects including ASCII, Grid, Flow, Dither, and more</li>
-            <li>GPU-accelerated for fast simulations</li>
+            <li><strong>FAST 2D smoke simulation</strong>Inside After Effects</li>
+            <li><strong>Fire</strong>Simulate fire as well</li>
+            <li><strong>11 built-in presets</strong>Start from fire, candle, magic fire, smoke, wispy smoke, steam, fog, dust, and ink</li>
+            <li><strong>Collisions</strong>Turn on collisions to interact with the smoke</li>
+            <li><strong>Lighting</strong>Turn on the optional lighting system and add depth to your smoke</li>
+            <li><strong>2D or native lights</strong>Use the built-in FluidLab 2D lights, or native After Effects lights</li>
+            <li><strong>Built-in styles</strong>Customize your smoke with style effects including ASCII, Grid, Flow, Dither, and more</li>
+            <li><strong>GPU-accelerated</strong>For fast simulations</li>
         </ul>
     </section>
 
     <section>
-        <div class="divider"><span>Setup</span></div>
-        <ol>
-            <li><strong>Install</strong> — run the installer for your
-                system. It needs an administrator password, since After
-                Effects plug-ins live in a shared folder.</li>
-            <li>Start (or restart) After Effects.</li>
-            <li>Make a solid the size of your comp, then apply
+        <h2 class="divider">Setup</h2>
+        <ol class="steps">
+            <li><strong>Install.</strong> Run the installer for your system.
+                It needs an administrator password, since After Effects
+                plug-ins live in a shared folder.</li>
+            <li><strong>Start (or restart) After Effects.</strong></li>
+            <li><strong>Apply the effect.</strong> Make a solid the size of
+                your comp, then apply
                 <em>Effect&nbsp;→&nbsp;FluidLab&nbsp;→&nbsp;FluidLab</em>.
                 Smoke starts from the built-in emitter right away.</li>
-            <li>Choose your layers under <strong>Fuel 1–3</strong>,
-                <strong>Collision</strong>, and <strong>Burst 1–2</strong>.
-                The layers you pick can stay hidden.</li>
-            <li>Pick a look from the <strong>Preset</strong> menu at the
-                top of the effect: Large presets suit backgrounds, Small
-                ones give finer detail for text.</li>
+            <li><strong>Choose your layers.</strong> Set them under
+                <strong>Fuel 1–3</strong>, <strong>Collision</strong>, and
+                <strong>Burst 1–2</strong>. The layers you pick can stay
+                hidden.</li>
+            <li><strong>Pick a look.</strong> Choose one from the
+                <strong>Preset</strong> menu at the top of the effect: Large
+                presets suit backgrounds, Small ones give finer detail for
+                text.</li>
         </ol>
-        <h3>The installers aren't signed yet</h3>
-        <p class="fine"><strong>macOS:</strong> if the installer says it
-        can't be opened, right-click it and choose <em>Open</em>. On macOS
-        15 and later, open <em>System Settings → Privacy &amp; Security</em>
-        instead and click <em>Open Anyway</em>.<br>
-        <strong>Windows:</strong> if SmartScreen says it protected your PC,
-        click <em>More info</em>, then <em>Run anyway</em>.</p>
-        <p class="fine">The plug-in installs to
-        <code>/Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/FluidLab</code>
-        on macOS and
-        <code>C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\FluidLab</code>
-        on Windows. To uninstall on macOS, delete that folder; on Windows,
-        use <em>Settings → Apps</em>.</p>
+
+        <div class="callout" id="unsigned">
+            <h3>If the installer won't open</h3>
+            <p>The installers aren't signed yet.</p>
+            <p><strong>macOS:</strong> if the installer says it can't be
+            opened, right-click it and choose <em>Open</em>. On macOS 15 and
+            later, open <em>System Settings → Privacy &amp; Security</em>
+            instead and click <em>Open Anyway</em>.</p>
+            <p><strong>Windows:</strong> if SmartScreen says it protected
+            your PC, click <em>More info</em>, then <em>Run anyway</em>.</p>
+        </div>
+
+        <details>
+            <summary>Install location and uninstalling</summary>
+            <div class="details-body">
+                <h3>Where it installs</h3>
+                <p class="fine">macOS: to uninstall, delete this folder.</p>
+                <div class="path">
+                    <code id="install-path-mac">/Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/FluidLab</code>
+                    <button class="copy" type="button" data-copy="install-path-mac">Copy</button>
+                </div>
+                <p class="fine">Windows: to uninstall, use <em>Settings →
+                Apps</em>.</p>
+                <div class="path">
+                    <code id="install-path-win">C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\FluidLab</code>
+                    <button class="copy" type="button" data-copy="install-path-win">Copy</button>
+                </div>
+            </div>
+        </details>
     </section>
 
     <section>
-        <div class="divider"><span>Requirements</span></div>
+        <h2 class="divider">Requirements</h2>
         <p class="fine">After Effects on macOS 12 or later (Apple Silicon
         or Intel) or 64-bit Windows. Developed and tested on After Effects
         2026; earlier versions haven't been tested. The Windows version is
@@ -290,65 +598,93 @@
         needs a GPU with feature level 11.1) is new in 0.1.31. Everything
         runs locally: no accounts and no network calls.</p>
     </section>
+    </main>
 
     <footer>
-        FluidLab <span id="version">v0.1.39</span> ·
-        <a href="https://github.com/tlatvys-ac/fluidlab-app/releases">release notes</a> ·
-        made by Thomas Latvys ·
-        see also <a href="https://tlatvys-ac.github.io/anchor-buddy-app/">Anchor Buddy</a>,
-        <a href="https://tlatvys-ac.github.io/transporter-app/">Transporter</a>,
-        <a href="https://tlatvys-ac.github.io/aedoom-app/">AEDoom</a>,
-        and <a href="https://tlatvys-ac.github.io/motionref-app/">MotionRef</a>
+        <p><span class="nowrap">FluidLab <span id="version">v0.1.39</span></span><span class="sep">·</span><wbr><a href="https://github.com/tlatvys-ac/fluidlab-app/releases">Release notes</a><span class="sep">·</span><wbr><span class="nowrap">Made by Thomas Latvys</span></p>
+        <p>More tools:
+            <a href="https://tlatvys-ac.github.io/refractlab-app/">RefractLab</a><span class="sep">·</span><wbr><a href="https://tlatvys-ac.github.io/anchor-buddy-app/">Anchor Buddy</a><span class="sep">·</span><wbr><a href="https://tlatvys-ac.github.io/transporter-app/">Transporter</a><span class="sep">·</span><wbr><a href="https://tlatvys-ac.github.io/aedoom-app/">AEDoom</a><span class="sep">·</span><wbr><a href="https://tlatvys-ac.github.io/motionref-app/">MotionRef</a>
+        </p>
     </footer>
-
-    <div class="lightbox" id="lightbox" role="dialog" aria-label="Render preview" aria-hidden="true">
-        <img id="lightbox-img" src="" alt="">
-    </div>
-
-    <script>
-    // Click a render to preview it at full size; click anywhere
-    // (or press Escape) to close.
-    (() => {
-        const box = document.getElementById("lightbox");
-        const big = document.getElementById("lightbox-img");
-        document.querySelectorAll(".shots img").forEach((img) => {
-            img.addEventListener("click", () => {
-                big.src = img.src;
-                big.alt = img.alt;
-                box.classList.add("open");
-                box.setAttribute("aria-hidden", "false");
-            });
-        });
-        const close = () => {
-            box.classList.remove("open");
-            box.setAttribute("aria-hidden", "true");
-        };
-        box.addEventListener("click", close);
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") close();
-        });
-    })();
-    </script>
-
-    <script>
-    // Keep the version and download links pointing at the latest
-    // release automatically; the hardcoded values above are the
-    // fallback if this fetch fails.
-    fetch("https://api.github.com/repos/tlatvys-ac/fluidlab-app/releases/latest")
-        .then((r) => r.json())
-        .then((rel) => {
-            const v = (rel.tag_name || "").replace(/^v/, "");
-            if (v) document.getElementById("version").textContent = "v" + v;
-            const link = (id, re) => {
-                const asset = (rel.assets || []).find((a) => re.test(a.name));
-                const el = document.getElementById(id);
-                if (asset && el) el.href = asset.browser_download_url;
-            };
-            link("dl-mac", /mac\.pkg$/);
-            link("dl-win", /win-setup\.exe$/);
-        })
-        .catch(() => {});
-    </script>
 </div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Render preview" hidden>
+    <img id="lightbox-img" src="" alt="">
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close preview">×</button>
+</div>
+
+<script>
+// Click (or Enter/Space on) a render to preview it at full size; click
+// anywhere, press Escape, or use the close button to close. Focus moves
+// into the preview and back to the render that opened it.
+(() => {
+    const box = document.getElementById("lightbox");
+    const big = document.getElementById("lightbox-img");
+    const closeBtn = document.getElementById("lightbox-close");
+    let opener = null;
+    const open = (btn) => {
+        const img = btn.querySelector("img");
+        const src = img.currentSrc || img.src;
+        // Close-ups open the whole render, in whichever format the browser picked.
+        big.src = btn.dataset.full ? btn.dataset.full + src.slice(src.lastIndexOf(".")) : src;
+        big.alt = img.alt.replace(/^Close-up of (\w)/, (m, c) => c.toUpperCase());
+        opener = btn;
+        box.hidden = false;
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+    };
+    const close = () => {
+        if (box.hidden) return;
+        box.hidden = true;
+        document.body.style.overflow = "";
+        if (opener) opener.focus();
+    };
+    document.querySelectorAll(".shot").forEach((btn) => btn.addEventListener("click", () => open(btn)));
+    box.addEventListener("click", close);
+    document.addEventListener("keydown", (e) => {
+        if (box.hidden) return;
+        if (e.key === "Escape") close();
+        if (e.key === "Tab") { e.preventDefault(); closeBtn.focus(); }
+    });
+})();
+
+// Copy the install path.
+document.querySelectorAll(".copy").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        const text = document.getElementById(btn.dataset.copy).textContent;
+        const done = () => {
+            btn.textContent = "Copied";
+            setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+        };
+        if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => {});
+    });
+});
+
+// Windows visitors get the Windows button first and highlighted.
+if (/Windows/i.test(navigator.userAgent)) {
+    const mac = document.getElementById("dl-mac"), win = document.getElementById("dl-win");
+    win.classList.remove("btn-secondary");
+    mac.classList.add("btn-secondary");
+    win.parentNode.insertBefore(win, mac);
+}
+
+// Keep the version and download links pointing at the latest release
+// automatically; the hardcoded values above are the fallback if this
+// fetch fails.
+fetch("https://api.github.com/repos/tlatvys-ac/fluidlab-app/releases/latest")
+    .then((r) => r.json())
+    .then((rel) => {
+        const v = (rel.tag_name || "").replace(/^v/, "");
+        if (v) document.getElementById("version").textContent = "v" + v;
+        const link = (id, re) => {
+            const asset = (rel.assets || []).find((a) => re.test(a.name));
+            const el = document.getElementById(id);
+            if (asset && el) el.href = asset.browser_download_url;
+        };
+        link("dl-mac", /mac\.pkg$/);
+        link("dl-win", /win-setup\.exe$/);
+    })
+    .catch(() => {});
+</script>
 </body>
 </html>
